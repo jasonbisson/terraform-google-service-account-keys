@@ -34,14 +34,25 @@ Functional examples are included in the
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| bucket\_name | The name of the bucket to create | `string` | n/a | yes |
-| project\_id | The project ID to deploy to | `string` | n/a | yes |
+| activate\_apis | The list of apis to activate for Cloud Function | `list(string)` | <pre>[<br>  "storage.googleapis.com",<br>  "cloudfunctions.googleapis.com",<br>  "securitycenter.googleapis.com",<br>  "cloudbuild.googleapis.com"<br>]</pre> | no |
+| compliance\_framework | Compliance framework to base security health check on | `string` | `"pci"` | no |
+| critical\_max | Number of critical findings before alerting | `string` | `"0"` | no |
+| disable\_dependent\_services | Whether services that are enabled and which depend on this service should also be disabled when this service is destroyed. https://www.terraform.io/docs/providers/google/r/google_project_service.html#disable_dependent_services | `string` | `"false"` | no |
+| disable\_services\_on\_destroy | Whether project services will be disabled when the resources are destroyed. https://www.terraform.io/docs/providers/google/r/google_project_service.html#disable_on_destroy | `string` | `"false"` | no |
+| enable\_apis | Whether to actually enable the APIs. If false, this module is a no-op. | `string` | `"true"` | no |
+| environment | Unique environment name to link the deployment together | `string` | `"scc-health"` | no |
+| function\_entry\_point | Name of function in python script | `string` | `"scc_helper_updated"` | no |
+| high\_max | Number of high findings before alerting | `string` | `"10"` | no |
+| identity\_running\_function | Google group that will have permission to invoke the cloud function | `string` | n/a | yes |
+| medium\_max | Number of medium findings before alerting | `string` | `"20"` | no |
+| org\_id | Organization ID to monitor Security Health | `any` | n/a | yes |
+| project\_id | Google Cloud Project where Cloud Function will be deployed | `any` | n/a | yes |
+| region | Region where cloud function is deployed | `string` | `"us-central1"` | no |
+| runtime | Runtime environment for cloud function | `string` | `"python37"` | no |
 
 ## Outputs
 
-| Name | Description |
-|------|-------------|
-| bucket\_name | Name of the bucket |
+No output.
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 

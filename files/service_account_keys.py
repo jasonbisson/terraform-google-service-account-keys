@@ -22,20 +22,9 @@ https://cloud.google.com/iam/docs/creating-managing-service-account-keys.
 """
 import base64
 import argparse
-# [START iam_create_key]
-# [START iam_list_keys]
-# [START iam_delete_key]
-import os
-
-from google.oauth2 import service_account
 import googleapiclient.discovery
 import google.auth
 import datetime
-import time
-
-# [END iam_create_key]
-# [END iam_list_keys]
-# [END iam_delete_key]
 
 
 # [START iam_create_key]
@@ -43,8 +32,7 @@ def create_key(service_account_email):
     """Creates a key for a service account."""
 
     credentials, project_id = google.auth.default()
-    #project_id = service_account_email.split('.')[0].split('@')[1]
-    
+    # project_id = service_account_email.split('.')[0].split('@')[1]
     service = googleapiclient.discovery.build(
         'iam', 'v1', credentials=credentials)
 
@@ -67,28 +55,25 @@ def list_keys(service_account_email):
         'iam', 'v1', credentials=credentials)
 
     keys = service.projects().serviceAccounts().keys().list(
-        name='projects/-/serviceAccounts/' + service_account_email, keyTypes="USER_MANAGED").execute()
+    name='projects/-/serviceAccounts/' + service_account_email, keyTypes="USER_MANAGED").execute()
 
     for key in keys['keys']:
         print(key['name'])
-
 # [END iam_list_keys]
 
 # [START delete_expired_keys]
 def delete_expired_keys(service_account_email):
     """Delete expired keys for a service account."""
-
     credentials, project_id = google.auth.default()
-
     service = googleapiclient.discovery.build(
         'iam', 'v1', credentials=credentials)
 
     keys = service.projects().serviceAccounts().keys().list(
-        name='projects/-/serviceAccounts/' + service_account_email, keyTypes="USER_MANAGED").execute()
+    name='projects/-/serviceAccounts/' + service_account_email, keyTypes="USER_MANAGED").execute()
 
     for key in keys['keys']:
         keyname = key['name']
-        expiration_date = key['validBeforeTime']    
+        expiration_date = key['validBeforeTime']
         expiration_datetime = datetime.datetime.strptime(expiration_date, '%Y-%m-%dT%H:%M:%SZ')
         now = datetime.datetime.now()
         days_until_expiration = (expiration_datetime - now).days
