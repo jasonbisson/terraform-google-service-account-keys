@@ -18,10 +18,6 @@ variable "project_id" {
   description = "Google Cloud Project where Cloud Function will be deployed"
 }
 
-variable "org_id" {
-  description = "Organization ID to monitor Security Health"
-}
-
 variable "region" {
   description = "Region where cloud function is deployed"
   type        = string
@@ -47,44 +43,24 @@ variable "disable_dependent_services" {
 
 variable "activate_apis" {
   description = "The list of apis to activate for Cloud Function"
-  default     = ["storage.googleapis.com", "cloudfunctions.googleapis.com", "securitycenter.googleapis.com", "cloudbuild.googleapis.com"]
+  default     = ["storage.googleapis.com", "cloudfunctions.googleapis.com", "cloudbuild.googleapis.com"]
   type        = list(string)
 }
 
 variable "environment" {
   description = "Unique environment name to link the deployment together"
-  default     = "scc-health"
+  default     = "key-expiration"
 }
 
 variable "function_entry_point" {
   description = "Name of function in python script"
-  default     = "scc_helper_updated"
+  default     = "main"
 }
 
 variable "runtime" {
   description = "Runtime environment for cloud function"
   type        = string
   default     = "python37"
-}
-
-variable "compliance_framework" {
-  description = "Compliance framework to base security health check on"
-  default     = "pci"
-}
-
-variable "critical_max" {
-  description = "Number of critical findings before alerting"
-  default     = "0"
-}
-
-variable "high_max" {
-  description = "Number of high findings before alerting"
-  default     = "10"
-}
-
-variable "medium_max" {
-  description = "Number of medium findings before alerting"
-  default     = "20"
 }
 
 variable "identity_running_function" {

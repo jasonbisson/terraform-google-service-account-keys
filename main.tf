@@ -32,20 +32,6 @@ resource "google_service_account" "main" {
   display_name = "${var.environment}${random_id.random_suffix.hex}"
 }
 
-resource "google_organization_iam_member" "binding" {
-  org_id     = var.org_id
-  role       = "roles/securitycenter.adminViewer"
-  member     = "serviceAccount:${google_service_account.main.email}"
-  depends_on = [google_cloudfunctions_function.function]
-}
-
-resource "google_project_iam_member" "binding" {
-  project    = var.project_id
-  role       = "roles/logging.logWriter"
-  member     = "serviceAccount:${google_service_account.main.email}"
-  depends_on = [google_cloudfunctions_function.function]
-}
-
 resource "google_cloudfunctions_function_iam_member" "invoker" {
   project        = var.project_id
   region         = google_cloudfunctions_function.function.region
@@ -67,12 +53,6 @@ resource "google_cloudfunctions_function" "function" {
   source_archive_object = google_storage_bucket_object.gcf_zip_gcs_object.name
   labels = {
     environment = var.environment
-  }
-  environment_variables = {
-    compliance   = var.compliance_framework,
-    critical_max = var.critical_max,
-    high_max     = var.high_max,
-    medium_max   = var.medium_max
   }
   depends_on = [google_project_service.project_services]
 }
@@ -98,11 +78,6 @@ data "archive_file" "gcf_zip_file" {
   source {
     content  = file("${path.module}/files/main.py")
     filename = "main.py"
-  }
-
-  source {
-    content  = file("${path.module}/files/requirements.txt")
-    filename = "requirements.txt"
   }
 
 }

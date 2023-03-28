@@ -98,7 +98,7 @@ def delete_key(full_key_name):
 # [END iam_delete_key]
 
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser(
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -131,3 +131,7 @@ if __name__ == '__main__':
         delete_key(args.full_key_name)
     elif args.command == 'delete_expired_keys':
         delete_expired_keys(args.service_account_email)
+
+if __name__ == '__main__':
+    main()
+
