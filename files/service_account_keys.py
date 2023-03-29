@@ -88,20 +88,40 @@ def delete_key(full_key_name):
     print('Deleted key: ' + full_key_name)
 # [END iam_delete_key]
 
-def main(request):
-    request_json = request.get_json(silent=True)
-    request_args = request.args
+def main():
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter)
 
-    method = request_json['method']
-    service_account_email = request_json['service_account_email']
+    subparsers = parser.add_subparsers(dest='command')
 
-    if method == 'list':
-        list_keys(service_account_email)
-    elif method == 'create':
-        create_key(service_account_email)
-    elif method == 'delete':
-        delete_key(full_key_name)
-    elif method == 'delete_expired_keys':
-        delete_expired_keys(service_account_email)
+    create_key_parser = subparsers.add_parser(
+        'create', help=create_key.__doc__)
+    create_key_parser.add_argument('service_account_email')
+
+    list_keys_parser = subparsers.add_parser(
+        'list', help=list_keys.__doc__)
+    list_keys_parser.add_argument('service_account_email')
+
+    delete_key_parser = subparsers.add_parser(
+        'delete', help=delete_key.__doc__)
+    delete_key_parser.add_argument('full_key_name')
+
+    delete_keys_parser = subparsers.add_parser(
+        'delete_expired_keys', help=delete_key.__doc__)
+    delete_keys_parser.add_argument('service_account_email')
+
+    args = parser.parse_args()
+
+    if args.command == 'list':
+        list_keys(args.service_account_email)
+    elif args.command == 'create':
+        create_key(args.service_account_email)
+    elif args.command == 'delete':
+        delete_key(args.full_key_name)
+    elif args.command == 'delete_expired_keys':
+        delete_expired_keys(args.service_account_email)
+
 if __name__ == '__main__':
     main()
+
