@@ -14,6 +14,25 @@
  * limitations under the License.
  */
 
+module "org-policy" {
+  source      = "terraform-google-modules/org-policy/google"
+  policy_for  = "project"
+  project_id  = var.project_id
+  constraint  = "iam.disableServiceAccountKeyCreation"
+  policy_type = "boolean"
+  enforce     = false
+}
+
+resource "google_project_organization_policy" "project_policy_list_allow_all" {
+  project    = var.project_id
+  constraint = "iam.serviceAccountKeyExpiryHours"
+  list_policy {
+    allow {
+      all = true
+    }
+  }
+}
+
 resource "random_id" "random_suffix" {
   byte_length = 4
 }
@@ -30,6 +49,12 @@ resource "google_service_account" "main" {
   project      = var.project_id
   account_id   = "${var.environment}-${random_id.random_suffix.hex}"
   display_name = "${var.environment}${random_id.random_suffix.hex}"
+}
+
+resource "google_project_iam_member" "main" {
+  project      = var.project_id
+  member   = "serviceAccount:${google_service_account.main.email}"
+  role     = "roles/iam.serviceAccountKeyAdmin"
 }
 
 resource "google_cloudfunctions_function_iam_member" "invoker" {
