@@ -14,25 +14,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Demonstrates how to perform basic operations with Google Cloud IAM
-service account keys.
-
-For more information, see the documentation at
-https://cloud.google.com/iam/docs/creating-managing-service-account-keys.
-"""
 import base64
 import argparse
 import googleapiclient.discovery
 import google.auth
 import datetime
 
-
 # [START iam_create_key]
 def create_key(service_account_email):
     """Creates a key for a service account."""
 
     credentials, project_id = google.auth.default()
-    # project_id = service_account_email.split('.')[0].split('@')[1]
+    #project_id = service_account_email.split('.')[0].split('@')[1]
     service = googleapiclient.discovery.build(
         'iam', 'v1', credentials=credentials)
 
@@ -43,7 +36,6 @@ def create_key(service_account_email):
     json_key_file = base64.b64decode(key['privateKeyData']).decode('utf-8')
 
 # [END iam_create_key]
-
 
 # [START iam_list_keys]
 def list_keys(service_account_email):
@@ -81,7 +73,6 @@ def delete_expired_keys(service_account_email):
             service.projects().serviceAccounts().keys().delete(
             name=keyname).execute()
 
-
 # [START iam_delete_key]
 def delete_key(full_key_name):
     """Deletes a service account key."""
@@ -96,7 +87,6 @@ def delete_key(full_key_name):
 
     print('Deleted key: ' + full_key_name)
 # [END iam_delete_key]
-
 
 def main():
     parser = argparse.ArgumentParser(
