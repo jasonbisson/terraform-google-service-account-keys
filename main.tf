@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-module "org-policy" {
-  source      = "terraform-google-modules/org-policy/google"
-  policy_for  = "project"
-  project_id  = var.project_id
-  constraint  = "iam.disableServiceAccountKeyCreation"
-  policy_type = "boolean"
-  enforce     = false
+
+resource "google_project_organization_policy" "project_policy_boolean" {
+  project    = var.project_id
+  constraint = "iam.disableServiceAccountKeyCreation"
+  boolean_policy {
+    enforced = false
+  }
 }
 
 resource "google_project_organization_policy" "project_policy_list_allow_all" {
@@ -28,7 +28,7 @@ resource "google_project_organization_policy" "project_policy_list_allow_all" {
   constraint = "iam.serviceAccountKeyExpiryHours"
   list_policy {
     allow {
-      all = true
+      values = ["1h"]
     }
   }
 }
