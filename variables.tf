@@ -67,3 +67,9 @@ variable "identity_running_function" {
   description = "Google group that will have permission to invoke the cloud function"
   type        = string
 }
+
+variable "key_expire_time" {
+  description = "How long a service account key will be valid"
+  type        = string
+  default     = "1h"
+}

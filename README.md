@@ -3,9 +3,9 @@
 This module will deploy a cloud function to act as proxy to manage service account keys with an expiration date. 
 
 ## Demo Reference Architecture
-![Reference Architecture](diagram/Service_key_creator.png)
+![Reference Architecture](diagram/SAK.png)
 
-## Usage
+## Cloud Function Usage
 
 Basic usage of this module is as follows:
 
@@ -18,9 +18,22 @@ module "service_account_keys" {
   identity_running_function ="Google group that will have permission to invoke the cloud function"
 }
 ```
+- `terraform init` to get the plugins
+- `terraform plan` to see the infrastructure plan
+- `terraform apply` to apply the infrastructure build
+- `gcloud config set project your_project_id`
+- `gcloud functions call key-expiration --data '{"method":"create", "service_account_email":"your_service_account@your_project_id.iam.gserviceaccount.com"}' to create key for service account
+- `gcloud functions call key-expiration --data '{"method":"list", "service_account_email":"your_service_account@your_project_id.iam.gserviceaccount.com"}' to list keys for service account
+- `gcloud functions call key-expiration --data '{"method":"delete", "full_key_name":"your_full_key_name_path"}' to delete an individual key in list output
+- `gcloud functions call key-expiration --data '{"method":"delete_expired_keys", "service_account_email":"your_service_account@your_project_id.iam.gserviceaccount.com"}' to delete all expired keys
+- `terraform destroy` to destroy the built infrastructure
 
-Functional examples are included in the
-[examples](./examples/) directory.
+##  Developer usage
+- `cd ~/terraform-google-service-account-keys/files`
+- `./service_account_keys.py create your_service_account@your_project_id.iam.gserviceaccount.com`
+- `./service_account_keys.py list your_service_account@your_project_id.iam.gserviceaccount.com`
+- `./service_account_keys.py delete full_key_name_path`
+- `./service_account_keys.py delete_expired_keys your_service_account@your_project_id.iam.gserviceaccount.com`
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Inputs
@@ -61,16 +74,20 @@ The deployment account with the following roles must be used to provision
 the resources of this module:
 
 - Storage Admin: `roles/storage.admin`
+- Cloud Function Admin: `roles/cloudfunctions.admin`
+- Security Admin: `roles/iam.securityAdmin`
 
 ### APIs
 
 A project with the following APIs enabled must be used to host the
 resources of this module:
 
-- Google Cloud Storage JSON API: `storage-api.googleapis.com`
+- Cloud Functions API: `cloudfunctions.googleapis.com`
+- Google Cloud Storage API: `storage-api.googleapis.com`
+- Cloud Build API: `cloudbuild.googleapis.com`
+- Pub/Sub: `pubsub.googleapis.com`
 
-The [Project Factory module][project-factory-module] can be used to
-provision a project with the necessary APIs enabled.
+
 
 ## Contributing
 

@@ -28,7 +28,7 @@ resource "google_project_organization_policy" "project_policy_list_allow_all" {
   constraint = "iam.serviceAccountKeyExpiryHours"
   list_policy {
     allow {
-      values = ["1h"]
+      values = [{var.key_expire_time}]
     }
   }
 }
@@ -84,6 +84,14 @@ resource "google_cloudfunctions_function" "function" {
 
 resource "google_storage_bucket" "gcf_source_bucket" {
   name                        = "${var.environment}-${random_id.random_suffix.hex}"
+  uniform_bucket_level_access = true
+  location                    = var.region
+  project                     = var.project_id
+  depends_on                  = [google_project_service.project_services]
+}
+
+resource "google_storage_bucket" "key_bucket" {
+  name                        = "${var.environment}-${random_id.random_suffix.hex}-keys"
   uniform_bucket_level_access = true
   location                    = var.region
   project                     = var.project_id
